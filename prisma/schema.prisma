@@ -14,7 +14,7 @@ datasource db {
 }
 
 model TransactionalProducts {
-  id                 Int      @id @default(autoincrement())
+  id                 String   @id @default(cuid())
   productName        String
   productDescription String
   createdAt          DateTime @default(now())
