@@ -1,10 +1,14 @@
 "use client";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   ButtonGroup,
+  DatePicker,
   getKeyValue,
   Input,
+  Pagination,
+  Select,
+  SelectItem,
   Spinner,
   Table,
   TableBody,
@@ -15,7 +19,7 @@ import {
 } from "@heroui/react";
 import { SortDescriptor } from "@react-types/shared";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetTransactionalProducts } from "../api-hooks/transactional-products/use-get-transactional-products";
 
 export interface TransactionalProductsTableProps {}
@@ -26,16 +30,23 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
   const [sortDescriptor, setSortDescriptor] = useState<
     SortDescriptor | undefined
   >(undefined);
+  const [selectedDate, setSelectedDate] = useState<any>(null);
 
-  const { transactionalProducts, isLoading, updateSearchParams } =
-    useGetTransactionalProducts({
-      productName: searchParams.get("productName") || undefined,
-      createdAt: searchParams.get("createdAt") || undefined,
-      updatedAt: searchParams.get("updatedAt") || undefined,
-      order: (searchParams.get("order") as "asc" | "desc") || "desc",
-      page: Number(searchParams.get("page")) || 1,
-      limit: Number(searchParams.get("limit")) || 10,
-    });
+  const {
+    transactionalProducts,
+    isLoading,
+    updateSearchParams,
+    limit,
+    page,
+    total,
+  } = useGetTransactionalProducts({
+    productName: searchParams.get("productName") || undefined,
+    createdAt: searchParams.get("createdAt") || undefined,
+    updatedAt: searchParams.get("updatedAt") || undefined,
+    order: (searchParams.get("order") as "asc" | "desc") || "desc",
+    page: Number(searchParams.get("page")) || 1,
+    limit: Number(searchParams.get("limit")) || 10,
+  });
 
   const handleSearch = (value: string) => {
     if (debounceTimerRef.current) {
@@ -51,8 +62,48 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
     setSortDescriptor(descriptor);
     updateSearchParams({
       productName: searchParams.get("productName") || undefined,
+      createdAt: searchParams.get("createdAt") || undefined,
       order: descriptor.direction === "ascending" ? "asc" : "desc",
       page: 1,
+    });
+  };
+
+  const handleDateChange = (date: any) => {
+    setSelectedDate(date);
+
+    if (date) {
+      const dateString = date.toString();
+      updateSearchParams({
+        productName: searchParams.get("productName") || undefined,
+        createdAt: dateString,
+        page: 1,
+      });
+    } else {
+      updateSearchParams({
+        productName: searchParams.get("productName") || undefined,
+        createdAt: undefined,
+        page: 1,
+      });
+    }
+  };
+
+  const handleClearFilters = () => {
+    // Limpar todos os estados
+    setSelectedDate(null);
+    setSortDescriptor(undefined);
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Resetar todos os filtros
+    updateSearchParams({
+      productName: undefined,
+      createdAt: undefined,
+      updatedAt: undefined,
+      order: "desc",
+      page: 1,
+      limit: 10,
     });
   };
 
@@ -74,15 +125,93 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
       year: "numeric",
     });
   };
+
+  const hasActiveFilters =
+    searchParams.get("productName") ||
+    searchParams.get("createdAt") ||
+    sortDescriptor;
+
+  const pages = React.useMemo(() => {
+    return total ? Math.ceil(total / limit) : 0;
+  }, [total, limit]);
+
   return (
     <div className="w-full flex flex-col space-y-4">
-      <div>
-        <Input
-          placeholder="Buscar por nome do produto"
-          onValueChange={handleSearch}
-        />
+      <div className="flex justify-start items-center space-x-4">
+        <div className="flex-1">
+          <Input
+            size="lg"
+            placeholder="Buscar por nome do produto"
+            onValueChange={handleSearch}
+            className="flex-1"
+            isClearable
+            defaultValue={searchParams.get("productName") || ""}
+          />
+        </div>
+        <div className="flex-1">
+          <DatePicker
+            label="Filtrar por data da criação"
+            value={selectedDate}
+            onChange={handleDateChange}
+          />
+        </div>
+        <div>
+          {hasActiveFilters && (
+            <Button
+              isIconOnly
+              color="danger"
+              variant="light"
+              size="lg"
+              onPress={handleClearFilters}
+              title="Limpar filtros"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+        <div className="flex-1">
+          <Select size="md" label="Linhas por página">
+            <SelectItem
+              key="5"
+              onPress={() => updateSearchParams({ limit: 5, page: 1 })}
+            >
+              5
+            </SelectItem>
+            <SelectItem
+              key="10"
+              onPress={() => updateSearchParams({ limit: 10, page: 1 })}
+            >
+              10
+            </SelectItem>
+            <SelectItem
+              key="20"
+              onPress={() => updateSearchParams({ limit: 20, page: 1 })}
+            >
+              20
+            </SelectItem>
+            <SelectItem
+              key="50"
+              onPress={() => updateSearchParams({ limit: 50, page: 1 })}
+            >
+              50
+            </SelectItem>
+          </Select>
+        </div>
       </div>
       <Table
+        bottomContent={
+          <div className="flex w-full justify-center">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="primary"
+              page={page}
+              total={pages}
+              onChange={(page) => updateSearchParams({ page })}
+            />
+          </div>
+        }
         fullWidth
         aria-label="Table with sorting"
         sortDescriptor={sortDescriptor}

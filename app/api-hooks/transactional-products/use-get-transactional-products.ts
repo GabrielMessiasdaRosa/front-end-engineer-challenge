@@ -63,7 +63,6 @@ export function useGetTransactionalProducts(
       },
     ],
     queryFn: async () => {
-      // Construir query string manualmente para preservar case-sensitivity
       const params = new URLSearchParams();
       params.append("page", String(page));
       params.append("limit", String(limit));
@@ -95,7 +94,6 @@ export function useGetTransactionalProducts(
     retry: 1,
   });
 
-  // Função para atualizar search params mantendo case-sensitivity
   const updateSearchParams = useCallback(
     (newParams: GetTransactionalProductsParams) => {
       const params = new URLSearchParams();
