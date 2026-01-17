@@ -88,7 +88,6 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
   };
 
   const handleClearFilters = () => {
-    // Limpar todos os estados
     setSelectedDate(null);
     setSortDescriptor(undefined);
 
@@ -96,7 +95,6 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Resetar todos os filtros
     updateSearchParams({
       productName: undefined,
       createdAt: undefined,
@@ -208,7 +206,7 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
               color="primary"
               page={page}
               total={pages}
-              onChange={(page) => updateSearchParams({ page })}
+              onChange={(page) => updateSearchParams({ page, limit })}
             />
           </div>
         }
