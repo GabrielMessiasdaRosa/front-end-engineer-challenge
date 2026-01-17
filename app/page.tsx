@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Button } from "@heroui/button";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,8 +17,9 @@ export default function Home() {
         </h1>
         <Link href="/dashboard" className="text-white">
           <Button
+            color="primary"
+            radius="full"
             className="animate-bounce transition-all duration-500 hover:scale-110"
-            variant="primary"
             size="lg"
           >
             Entrar
