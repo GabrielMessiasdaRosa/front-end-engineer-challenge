@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
     const createdAt = searchParams.get("createdAt");
     const updatedAt = searchParams.get("updatedAt");
     const order = searchParams.get("order") || "asc";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     let filter: any = {};
 
@@ -28,6 +30,8 @@ export async function GET(request: NextRequest) {
     const products = await prisma.transactionalProducts.findMany({
       where: filter,
       orderBy: { createdAt: order as "asc" | "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     return Response.json(
