@@ -16,7 +16,7 @@ export function useCreateTransactionalProduct() {
     error,
     reset,
   } = useMutation({
-    mutationKey: ["transactional-products", "create"],
+    mutationKey: ["transactional-product", "create"],
     mutationFn: async (body: CreateTransactionalProductsPayload) => {
       const res = await fetch("/api/v1/transactional-products", {
         method: "POST",
@@ -32,7 +32,7 @@ export function useCreateTransactionalProduct() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["transactional-products", "list"],
+        queryKey: ["transactional-product", "list"],
       });
       addToast({
         title: "Produto transacional criado",

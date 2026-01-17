@@ -50,7 +50,7 @@ export function useGetTransactionalProducts(
     error,
   } = useQuery<ApiResponse, Error>({
     queryKey: [
-      "transaction-product",
+      "transactional-product",
       "list",
       {
         page,

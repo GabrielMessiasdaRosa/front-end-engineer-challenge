@@ -24,7 +24,6 @@ export interface NewTransactionalProductFormModalProps {}
 
 export default function NewTransactionalProductFormModal({}: NewTransactionalProductFormModalProps) {
   const { createTransactionalProduct } = useCreateTransactionalProduct();
-
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     register,
@@ -38,6 +37,7 @@ export default function NewTransactionalProductFormModal({}: NewTransactionalPro
       productName: data.productName,
       productDescription: data.productDescription,
     });
+
     reset();
     onClose();
   };
