@@ -1,8 +1,7 @@
 "use client";
-import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Button,
-  ButtonGroup,
   DatePicker,
   getKeyValue,
   Input,
@@ -21,11 +20,18 @@ import { SortDescriptor } from "@react-types/shared";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { useGetTransactionalProducts } from "../api-hooks/transactional-products/use-get-transactional-products";
+import DeleteTransactionalProductConfirmationModal from "./delete-transactional-product-confirmation-modal";
+import UpdateTransactionalProductFormModal from "./update-transactional-product-form-modal";
 
 export interface TransactionalProductsTableProps {}
 
 export default function TransactionalProductsTable({}: TransactionalProductsTableProps) {
   const searchParams = useSearchParams();
+  const productName = searchParams.get("productName") || undefined;
+  const createdAt = searchParams.get("createdAt") || undefined;
+  const updatedAt = searchParams.get("updatedAt") || undefined;
+  const order = (searchParams.get("order") as "asc" | "desc") || "desc";
+
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [sortDescriptor, setSortDescriptor] = useState<
     SortDescriptor | undefined
@@ -40,10 +46,10 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
     page,
     total,
   } = useGetTransactionalProducts({
-    productName: searchParams.get("productName") || undefined,
-    createdAt: searchParams.get("createdAt") || undefined,
-    updatedAt: searchParams.get("updatedAt") || undefined,
-    order: (searchParams.get("order") as "asc" | "desc") || "desc",
+    productName,
+    createdAt,
+    updatedAt,
+    order,
     page: Number(searchParams.get("page")) || 1,
     limit: Number(searchParams.get("limit")) || 10,
   });
@@ -171,25 +177,61 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           <Select size="md" label="Linhas por página">
             <SelectItem
               key="5"
-              onPress={() => updateSearchParams({ limit: 5, page: 1 })}
+              onPress={() =>
+                updateSearchParams({
+                  limit: 5,
+                  page: 1,
+                  createdAt: selectedDate ? createdAt : undefined,
+                  order,
+                  productName,
+                  updatedAt,
+                })
+              }
             >
               5
             </SelectItem>
             <SelectItem
               key="10"
-              onPress={() => updateSearchParams({ limit: 10, page: 1 })}
+              onPress={() =>
+                updateSearchParams({
+                  limit: 10,
+                  page: 1,
+                  createdAt: selectedDate ? createdAt : undefined,
+                  order,
+                  productName,
+                  updatedAt,
+                })
+              }
             >
               10
             </SelectItem>
             <SelectItem
               key="20"
-              onPress={() => updateSearchParams({ limit: 20, page: 1 })}
+              onPress={() =>
+                updateSearchParams({
+                  limit: 20,
+                  page: 1,
+                  createdAt: selectedDate ? createdAt : undefined,
+                  order,
+                  productName,
+                  updatedAt,
+                })
+              }
             >
               20
             </SelectItem>
             <SelectItem
               key="50"
-              onPress={() => updateSearchParams({ limit: 50, page: 1 })}
+              onPress={() =>
+                updateSearchParams({
+                  limit: 50,
+                  page: 1,
+                  createdAt: selectedDate ? createdAt : undefined,
+                  order,
+                  productName,
+                  updatedAt,
+                })
+              }
             >
               50
             </SelectItem>
@@ -206,7 +248,16 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
               color="primary"
               page={page}
               total={pages}
-              onChange={(page) => updateSearchParams({ page, limit })}
+              onChange={(page) =>
+                updateSearchParams({
+                  page,
+                  limit,
+                  createdAt: selectedDate ? createdAt : undefined,
+                  order,
+                  productName,
+                  updatedAt,
+                })
+              }
             />
           </div>
         }
@@ -230,7 +281,11 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           </TableColumn>
           <TableColumn key="actions">Ações</TableColumn>
         </TableHeader>
-        <TableBody isLoading={isLoading} loadingContent={<Spinner />}>
+        <TableBody
+          key={transactionalProducts.length}
+          isLoading={isLoading}
+          loadingContent={<Spinner />}
+        >
           {transactionalProducts.map((product) => (
             <TableRow key={product.id}>
               <TableCell>{getKeyValue(product, "productName")}</TableCell>
@@ -244,14 +299,12 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
                 {normalizeDate(getKeyValue(product, "updatedAt"))}
               </TableCell>
               <TableCell>
-                <ButtonGroup className="space-x-4">
-                  <Button isIconOnly color="primary" size="sm">
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                  <Button isIconOnly color="danger" size="sm">
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </ButtonGroup>
+                <div className="flex flex-row space-x-4">
+                  <UpdateTransactionalProductFormModal product={product} />
+                  <DeleteTransactionalProductConfirmationModal
+                    product={product}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}
