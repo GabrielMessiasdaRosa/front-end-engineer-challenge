@@ -105,7 +105,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    console.log(error);
     if (error.code === "P2002") {
       return Response.json(
         { message: "Este produto transacional já existe" },

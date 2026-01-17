@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+    <main className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <div className="space-y-6 flex flex-col items-center">
         <Image
           src="/logo-shipayLogoshipay.svg"
@@ -15,7 +15,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
           Desafio Front End Engineer - Shipay
         </h1>
-        <Link href="/dashboard" className="text-white">
+        <Link href="/transactional-products" className="text-white">
           <Button
             color="primary"
             radius="full"
@@ -26,6 +26,6 @@ export default function Home() {
           </Button>
         </Link>
       </div>
-    </div>
+    </main>
   );
 }
