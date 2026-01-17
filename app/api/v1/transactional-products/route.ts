@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     if (productName) {
       filter.productName = {
         contains: productName,
-        mode: "insensitive",
       };
     }
 
@@ -64,11 +63,16 @@ export async function POST(request: Request) {
       productName: formData.get("productName"),
       productDescription: formData.get("productDescription"),
     };
-
+    if (!payload.productName) {
+      return Response.json(
+        { message: "Nome do produto é obrigatório" },
+        { status: 400 },
+      );
+    }
     const product = await prisma.transactionalProducts.create({
       data: {
         productName: String(payload.productName),
-        productDescription: String(payload.productDescription),
+        productDescription: String(payload.productDescription) || "",
       },
     });
 
