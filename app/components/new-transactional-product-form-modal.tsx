@@ -56,6 +56,7 @@ export default function NewTransactionalProductFormModal({}: NewTransactionalPro
               <ModalBody className="w-full">
                 <Input
                   isRequired
+                  autoFocus
                   label="Nome do produto"
                   {...register("productName", { required: true })}
                   errorMessage={

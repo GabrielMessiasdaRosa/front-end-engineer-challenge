@@ -42,13 +42,13 @@ export async function GET(request: NextRequest) {
         lt: endDate,
       };
     }
-    const skip = page - 1 == 0 ? (page - 1) * limit : 10;
+
     const products = await prisma.transactionalProducts.findMany({
       where: filter,
       orderBy: {
         productName: order as "asc" | "desc",
       },
-      skip: skip,
+      skip: (page - 1) * limit,
       take: limit,
     });
 
