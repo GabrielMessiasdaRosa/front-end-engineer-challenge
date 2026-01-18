@@ -1,5 +1,5 @@
 "use client";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   DatePicker,
@@ -141,6 +141,7 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
             onValueChange={handleSearch}
             className="flex-1"
             isClearable
+            startContent={<MagnifyingGlassIcon className="h-5 w-5" />}
             defaultValue={searchParams.get("productName") || ""}
           />
         </div>
@@ -166,7 +167,7 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           )}
         </div>
         <div className="flex-1">
-          <Select size="md" label="Linhas por página" defaultOpen>
+          <Select size="md" label="Itens por página">
             {ROWS_PER_PAGE_OPTIONS.map((option) => (
               <SelectItem
                 key={String(option)}
@@ -210,6 +211,7 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
         aria-label="Table with sorting"
         sortDescriptor={sortDescriptor}
         onSortChange={handleSortChange}
+        isStriped
       >
         <TableHeader>
           <TableColumn allowsSorting key="productName">
@@ -218,10 +220,10 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           <TableColumn key="productDescription">
             Descrição do produto
           </TableColumn>
-          <TableColumn allowsSorting key="createdAt">
+          <TableColumn key="createdAt">
             Criado em
           </TableColumn>
-          <TableColumn allowsSorting key="updatedAt">
+          <TableColumn key="updatedAt">
             Atualizado em
           </TableColumn>
           <TableColumn key="actions">Ações</TableColumn>
@@ -229,6 +231,7 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
         <TableBody
           key={transactionalProducts.length}
           isLoading={isLoading}
+          emptyContent="Nenhum produto transacional encontrado"
           loadingContent={<Spinner />}
         >
           {transactionalProducts.map((product) => (

@@ -58,7 +58,13 @@ export default function UpdateTransactionalProductFormModal({
   };
   return (
     <div>
-      <Button onPress={onOpen} isIconOnly color="primary" size="sm">
+      <Button
+        onPress={onOpen}
+        isIconOnly
+        color="primary"
+        variant="flat"
+        size="sm"
+      >
         <PencilIcon className="h-4 w-4" />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -86,6 +92,7 @@ export default function UpdateTransactionalProductFormModal({
               <ModalFooter className="flex flex-row items-end w-full">
                 <Button
                   color="danger"
+                  radius="full"
                   variant="light"
                   onPress={() => {
                     onClose();
@@ -94,7 +101,12 @@ export default function UpdateTransactionalProductFormModal({
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" color="success" className="text-white">
+                <Button
+                  radius="full"
+                  type="submit"
+                  color="success"
+                  className="text-white"
+                >
                   Salvar
                 </Button>
               </ModalFooter>

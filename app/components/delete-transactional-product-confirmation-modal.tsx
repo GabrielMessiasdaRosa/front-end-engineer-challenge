@@ -24,7 +24,13 @@ export default function DeleteTransactionalProductConfirmationModal({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
-      <Button onPress={onOpen} isIconOnly color="danger" size="sm">
+      <Button
+        variant="flat"
+        onPress={onOpen}
+        isIconOnly
+        color="danger"
+        size="sm"
+      >
         <TrashIcon className="h-4 w-4" />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -46,10 +52,16 @@ export default function DeleteTransactionalProductConfirmationModal({
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="primary" variant="light" onPress={onClose}>
+                <Button
+                  radius="full"
+                  color="primary"
+                  variant="light"
+                  onPress={onClose}
+                >
                   Cancelar
                 </Button>
                 <Button
+                  radius="full"
                   onPress={() => {
                     deleteTransactionalProduct({
                       productId: product.id,

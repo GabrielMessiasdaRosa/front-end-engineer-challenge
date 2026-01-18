@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
     }
 
     if (createdAt) {
-      // Parse a data sem considerar timezone
       const [year, month, day] = createdAt.split("-").map(Number);
 
       const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
@@ -46,7 +45,9 @@ export async function GET(request: NextRequest) {
 
     const products = await prisma.transactionalProducts.findMany({
       where: filter,
-      orderBy: { createdAt: order as "asc" | "desc" },
+      orderBy: {
+        productName: order as "asc" | "desc",
+      },
       skip: (page - 1) * limit,
       take: limit,
     });
