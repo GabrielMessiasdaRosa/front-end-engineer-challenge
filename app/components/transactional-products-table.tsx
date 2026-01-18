@@ -139,9 +139,12 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
             size="lg"
             placeholder="Buscar por nome do produto"
             onValueChange={handleSearch}
-            className="flex-1"
+            className="flex-1 "
+            classNames={{
+              inputWrapper: "h-14",
+            }}
             isClearable
-            startContent={<MagnifyingGlassIcon className="h-5 w-5" />}
+            startContent={<MagnifyingGlassIcon className="h-5 w-5 " />}
             defaultValue={searchParams.get("productName") || ""}
           />
         </div>
@@ -220,12 +223,8 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           <TableColumn key="productDescription">
             Descrição do produto
           </TableColumn>
-          <TableColumn key="createdAt">
-            Criado em
-          </TableColumn>
-          <TableColumn key="updatedAt">
-            Atualizado em
-          </TableColumn>
+          <TableColumn key="createdAt">Criado em</TableColumn>
+          <TableColumn key="updatedAt">Atualizado em</TableColumn>
           <TableColumn key="actions">Ações</TableColumn>
         </TableHeader>
         <TableBody
