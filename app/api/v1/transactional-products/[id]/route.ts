@@ -7,16 +7,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const product = await prisma.transactionalProducts.findUnique({
+    const product = await prisma.transactionalProducts.findUniqueOrThrow({
       where: { id: id },
     });
-
-    if (!product) {
-      return Response.json(
-        { message: "Produto transacional não encontrado" },
-        { status: 404 },
-      );
-    }
 
     return Response.json(
       {
@@ -41,7 +34,13 @@ export async function GET(
       },
       { status: 200 },
     );
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code == "P2025") {
+      return Response.json(
+        { message: "Produto transacional não encontrado" },
+        { status: 404 },
+      );
+    }
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
