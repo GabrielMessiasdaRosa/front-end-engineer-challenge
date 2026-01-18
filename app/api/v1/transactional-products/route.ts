@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get("order") || "asc";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
-
     let filter: any = {};
 
     if (productName) {
@@ -43,13 +42,13 @@ export async function GET(request: NextRequest) {
         lt: endDate,
       };
     }
-
+    const skip = page - 1 == 0 ? (page - 1) * limit : 10;
     const products = await prisma.transactionalProducts.findMany({
       where: filter,
       orderBy: {
         productName: order as "asc" | "desc",
       },
-      skip: (page - 1) * limit,
+      skip: skip,
       take: limit,
     });
 
@@ -80,7 +79,6 @@ export async function GET(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.log(String(error));
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -133,7 +131,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    console.error(error);
     if (error.code === "P2002") {
       return Response.json(
         { message: "Este produto transacional já existe" },
