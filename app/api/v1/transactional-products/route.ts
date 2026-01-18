@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     if (productName) {
       filter.productName = {
         contains: productName,
+        mode: "insensitive",
       };
     }
 
@@ -79,6 +80,7 @@ export async function GET(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
+    console.log(String(error));
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
