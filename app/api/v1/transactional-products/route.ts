@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
     const createdAt = searchParams.get("createdAt");
     const updatedAt = searchParams.get("updatedAt");
     const order = searchParams.get("order") || "asc";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     let filter: any = {};
 
@@ -18,21 +20,46 @@ export async function GET(request: NextRequest) {
     }
 
     if (createdAt) {
-      filter.createdAt = new Date(createdAt);
+      const [year, month, day] = createdAt.split("-").map(Number);
+
+      const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+      const endDate = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
+
+      filter.createdAt = {
+        gte: startDate,
+        lt: endDate,
+      };
     }
 
     if (updatedAt) {
-      filter.updatedAt = new Date(updatedAt);
+      const [year, month, day] = updatedAt.split("-").map(Number);
+
+      const startDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+      const endDate = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
+
+      filter.updatedAt = {
+        gte: startDate,
+        lt: endDate,
+      };
     }
 
     const products = await prisma.transactionalProducts.findMany({
       where: filter,
-      orderBy: { createdAt: order as "asc" | "desc" },
+      orderBy: {
+        productName: order as "asc" | "desc",
+      },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    const total = await prisma.transactionalProducts.count({ where: filter });
 
     return Response.json(
       {
         data: products,
+        page,
+        limit,
+        total,
         links: [
           {
             rel: "self",
@@ -58,17 +85,20 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
+
     const payload = {
-      productName: formData.get("productName"),
-      productDescription: formData.get("productDescription"),
+      productName: body.productName,
+      productDescription: body.productDescription,
     };
+
     if (!payload.productName) {
       return Response.json(
         { message: "Nome do produto é obrigatório" },
         { status: 400 },
       );
     }
+
     const product = await prisma.transactionalProducts.create({
       data: {
         productName: String(payload.productName),
@@ -101,7 +131,7 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     if (error.code === "P2002") {
       return Response.json(
         { message: "Este produto transacional já existe" },

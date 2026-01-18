@@ -52,10 +52,10 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const formData = await request.formData();
-    let payload = {
-      productName: formData.get("productName"),
-      productDescription: formData.get("productDescription"),
+    const body = await request.json();
+    const payload = {
+      productName: body.productName,
+      productDescription: body.productDescription,
     };
     const product = await prisma.transactionalProducts.findUnique({
       where: { id: id },
