@@ -70,6 +70,7 @@ export default function NewTransactionalProductFormModal({}: NewTransactionalPro
               </ModalBody>
               <ModalFooter className="flex flex-row items-end w-full">
                 <Button
+                  radius="full"
                   color="danger"
                   variant="light"
                   onPress={() => {
@@ -79,7 +80,12 @@ export default function NewTransactionalProductFormModal({}: NewTransactionalPro
                 >
                   Cancelar
                 </Button>
-                <Button type="submit" color="success" className="text-white">
+                <Button
+                  radius="full"
+                  type="submit"
+                  color="success"
+                  className="text-white"
+                >
                   Salvar
                 </Button>
               </ModalFooter>
