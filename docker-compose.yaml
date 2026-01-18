@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: front-end-challenge
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - docker-project-network
+
+  nextjs-app:
+    build: .
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/front-end-challenge
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - docker-project-network
+
+networks:
+  docker-project-network:
+    driver: bridge
+
+volumes:
+  pgdata:
