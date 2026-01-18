@@ -1,3 +1,4 @@
+"use client";
 import { TransactionalProducts } from "@/app/generated/prisma/client";
 import { useQuery } from "@tanstack/react-query";
 

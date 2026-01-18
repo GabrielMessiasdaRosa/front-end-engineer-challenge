@@ -20,8 +20,11 @@ import { SortDescriptor } from "@react-types/shared";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { useGetTransactionalProducts } from "../api-hooks/transactional-products/use-get-transactional-products";
+import normalizeDate from "../lib/normalize-date";
 import DeleteTransactionalProductConfirmationModal from "./delete-transactional-product-confirmation-modal";
 import UpdateTransactionalProductFormModal from "./update-transactional-product-form-modal";
+
+const ROWS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
 
 export interface TransactionalProductsTableProps {}
 
@@ -119,17 +122,6 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
     };
   }, []);
 
-  const normalizeDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const hasActiveFilters =
     searchParams.get("productName") ||
     searchParams.get("createdAt") ||
@@ -174,67 +166,20 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
           )}
         </div>
         <div className="flex-1">
-          <Select size="md" label="Linhas por página">
-            <SelectItem
-              key="5"
-              onPress={() =>
-                updateSearchParams({
-                  limit: 5,
-                  page: 1,
-                  createdAt: selectedDate ? createdAt : undefined,
-                  order,
-                  productName,
-                  updatedAt,
-                })
-              }
-            >
-              5
-            </SelectItem>
-            <SelectItem
-              key="10"
-              onPress={() =>
-                updateSearchParams({
-                  limit: 10,
-                  page: 1,
-                  createdAt: selectedDate ? createdAt : undefined,
-                  order,
-                  productName,
-                  updatedAt,
-                })
-              }
-            >
-              10
-            </SelectItem>
-            <SelectItem
-              key="20"
-              onPress={() =>
-                updateSearchParams({
-                  limit: 20,
-                  page: 1,
-                  createdAt: selectedDate ? createdAt : undefined,
-                  order,
-                  productName,
-                  updatedAt,
-                })
-              }
-            >
-              20
-            </SelectItem>
-            <SelectItem
-              key="50"
-              onPress={() =>
-                updateSearchParams({
-                  limit: 50,
-                  page: 1,
-                  createdAt: selectedDate ? createdAt : undefined,
-                  order,
-                  productName,
-                  updatedAt,
-                })
-              }
-            >
-              50
-            </SelectItem>
+          <Select size="md" label="Linhas por página" defaultOpen>
+            {ROWS_PER_PAGE_OPTIONS.map((option) => (
+              <SelectItem
+                key={String(option)}
+                onPress={() =>
+                  updateSearchParams({
+                    limit: option,
+                    createdAt: selectedDate ? createdAt : undefined,
+                  })
+                }
+              >
+                {String(option)}
+              </SelectItem>
+            ))}
           </Select>
         </div>
       </div>

@@ -1,3 +1,4 @@
+"use client";
 import { addToast } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
