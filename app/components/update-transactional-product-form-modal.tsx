@@ -14,6 +14,7 @@ import {
   Textarea,
   useDisclosure,
 } from "@heroui/react";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useUpdateTransactionalProducts } from "../api-hooks/transactional-products/use-update-transactional-product";
 import { TransactionalProducts } from "../generated/prisma/client";
@@ -31,13 +32,12 @@ export default function UpdateTransactionalProductFormModal({
   product,
 }: UpdateTransactionalProductFormModalProps) {
   const { updateTransactionalProduct } = useUpdateTransactionalProducts();
-
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     register,
     handleSubmit,
-    watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<UpdateTransactionalProduct>({
     defaultValues: {
@@ -56,6 +56,12 @@ export default function UpdateTransactionalProductFormModal({
     reset();
     onClose();
   };
+
+  React.useEffect(() => {
+    setValue("productName", product.productName);
+    setValue("productDescription", product.productDescription);
+  }, [product]);
+
   return (
     <div>
       <Button
@@ -76,8 +82,10 @@ export default function UpdateTransactionalProductFormModal({
               </ModalHeader>
               <ModalBody className="w-full">
                 <Input
+                  autoFocus
                   isRequired
                   label="Nome do produto"
+                  defaultValue={product.productName}
                   {...register("productName", { required: true })}
                   errorMessage={
                     errors.productName ? "Nome do produto é obrigatório" : ""
@@ -85,6 +93,7 @@ export default function UpdateTransactionalProductFormModal({
                 />
                 <Textarea
                   label="Descrição do produto"
+                  defaultValue={product.productDescription}
                   className="mt-4"
                   {...register("productDescription")}
                 />

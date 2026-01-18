@@ -139,9 +139,12 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
             size="lg"
             placeholder="Buscar por nome do produto"
             onValueChange={handleSearch}
-            className="flex-1"
+            className="flex-1 "
+            classNames={{
+              inputWrapper: "h-14",
+            }}
             isClearable
-            startContent={<MagnifyingGlassIcon className="h-5 w-5" />}
+            startContent={<MagnifyingGlassIcon className="h-5 w-5 " />}
             defaultValue={searchParams.get("productName") || ""}
           />
         </div>
@@ -214,19 +217,21 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
         isStriped
       >
         <TableHeader>
-          <TableColumn allowsSorting key="productName">
+          <TableColumn className="font-black" allowsSorting key="productName">
             Nome do produto
           </TableColumn>
-          <TableColumn key="productDescription">
+          <TableColumn className="font-black" key="productDescription">
             Descrição do produto
           </TableColumn>
-          <TableColumn key="createdAt">
+          <TableColumn className="font-black" key="createdAt">
             Criado em
           </TableColumn>
-          <TableColumn key="updatedAt">
+          <TableColumn className="font-black" key="updatedAt">
             Atualizado em
           </TableColumn>
-          <TableColumn key="actions">Ações</TableColumn>
+          <TableColumn className="font-black" key="actions">
+            Ações
+          </TableColumn>
         </TableHeader>
         <TableBody
           key={transactionalProducts.length}
@@ -236,15 +241,17 @@ export default function TransactionalProductsTable({}: TransactionalProductsTabl
         >
           {transactionalProducts.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>{getKeyValue(product, "productName")}</TableCell>
               <TableCell>
-                {getKeyValue(product, "productDescription")}
+                {getKeyValue(product, "productName") || "--"}
+              </TableCell>
+              <TableCell>
+                {getKeyValue(product, "productDescription") || "--"}
               </TableCell>
               <TableCell className="flex-1">
-                {normalizeDate(getKeyValue(product, "createdAt"))}
+                {normalizeDate(getKeyValue(product, "createdAt")) || "--"}
               </TableCell>
               <TableCell>
-                {normalizeDate(getKeyValue(product, "updatedAt"))}
+                {normalizeDate(getKeyValue(product, "updatedAt")) || "--"}
               </TableCell>
               <TableCell>
                 <div className="flex flex-row space-x-4">

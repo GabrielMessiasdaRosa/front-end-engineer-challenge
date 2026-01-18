@@ -10,12 +10,12 @@ export async function GET(request: NextRequest) {
     const order = searchParams.get("order") || "asc";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
-
     let filter: any = {};
 
     if (productName) {
       filter.productName = {
         contains: productName,
+        mode: "insensitive",
       };
     }
 
@@ -131,7 +131,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    console.error(error);
     if (error.code === "P2002") {
       return Response.json(
         { message: "Este produto transacional já existe" },
